@@ -1,16 +1,13 @@
 import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
-from docx import Document
-from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
-from docx.shared import Pt
 import datetime
 from docx2pdf import convert
 import os
 
-from hipoScript import hipo_creator
-from contratoScript import contrato_creator
-from procScript import proc_creator
+from ScriptHipo import hipo_creator
+from ScriptContrato import contrato_creator
+from ScriptProcuracao import proc_creator
 
 local_dir = os.getcwd()
 
@@ -19,7 +16,8 @@ def create_document(nome_doc_entry, nome_entry, std_civil_entry, ocupacao_entry,
     nome = nome_entry.get()
     std_civil = std_civil_entry.get()
     ocupacao = ocupacao_entry.get()
-    cpf = cpf_entry.get()
+    cpf = cpf_entry.get() 
+    cpfVerified = False   
     rg = rg_entry.get()
     endereco = endereco_entry.get()
     local = local_entry.get()
@@ -34,7 +32,25 @@ def create_document(nome_doc_entry, nome_entry, std_civil_entry, ocupacao_entry,
     valor_total = valor_total_entry.get()  
     valor_assinatura = valor_assinatura_entry.get()
 
-    if nome_doc and nome and std_civil and ocupacao and cpf and rg and endereco and local and dia and mes and ano and choice and valor_mensal and valor_total and valor_assinatura:
+    def valida_cpf(cpf: str) -> bool:
+        cpf = ''.join(filter(str.isdigit, cpf))
+        
+        if len(cpf) != 11:
+            return False
+
+        if cpf == cpf[0] * len(cpf):
+            return False
+
+        soma = sum(int(cpf[i]) * (10 - i) for i in range(9))
+        primeiro_digito = (soma * 10 % 11) % 10
+
+        soma = sum(int(cpf[i]) * (11 - i) for i in range(10))
+        segundo_digito = (soma * 10 % 11) % 10
+
+        return cpf[-2:] == f'{primeiro_digito}{segundo_digito}'
+
+
+    if nome_doc and nome and std_civil and ocupacao and valida_cpf(cpf) == True and rg and endereco and local and dia and mes and ano and choice and valor_mensal and valor_total and valor_assinatura:
         if choice == 1:
             proc_creator(nome_doc, nome, std_civil, ocupacao, cpf, rg, endereco, local, dia, mes, ano)
         elif choice == 2:
@@ -45,6 +61,8 @@ def create_document(nome_doc_entry, nome_entry, std_civil_entry, ocupacao_entry,
             contrato_creator(nome_doc, nome, std_civil, ocupacao, cpf, rg, endereco, local, dia, mes, ano, valor_mensal, valor_total, valor_assinatura)
         else:
             messagebox.showerror("Erro", "Escolha inválida!")
+    elif(not valida_cpf(cpf)):
+        messagebox.showerror("Erro", "CPF Inválido")
     else:
         messagebox.showerror("Erro", "Preencha todos os campos!")
 
