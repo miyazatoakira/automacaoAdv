@@ -1,8 +1,8 @@
 import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
+from docx import Document
 import datetime
-from docx2pdf import convert
 import os
 
 from ScriptHipo import hipo_creator
@@ -66,13 +66,6 @@ def create_document(nome_doc_entry, nome_entry, std_civil_entry, ocupacao_entry,
     else:
         messagebox.showerror("Erro", "Preencha todos os campos!")
 
-
-def convert_to_pdf(docx_path):
-    try:
-        convert(docx_path)
-        messagebox.showinfo("Sucesso", f"{docx_path} convertido para PDF com sucesso!")
-    except Exception as e:
-        messagebox.showerror("Erro", f"Erro ao converter para PDF: {str(e)}")
 
 def create_gui():
     root = tk.Tk()
@@ -149,27 +142,8 @@ def create_gui():
     create_button = ttk.Button(mainframe, text="Criar Documento", command=lambda: create_document(nome_doc_entry, nome_entry, std_civil_entry, ocupacao_entry, cpf_entry, rg_entry, endereco_entry, local_entry, dia_entry, mes_entry, ano_entry, choice_var, valor_mensal_entry, valor_total_entry, valor_assinatura_entry))
     create_button.grid(column=2, row=16, sticky=(tk.W, tk.E))
 
-    def convert_to_pdf_wrapper():
-        docx_path = fr'{local_dir}/proc_{nome_doc_entry.get()}.docx'  # alterar caminho do arquivo, dependendo do dispositivo
-        if choice_var.get() == 1:
-            docx_path = fr'{local_dir}/proc_{nome_doc_entry.get()}.docx'  # alterar caminho do arquivo, dependendo do dispositivo
-        elif choice_var.get() == 2:
-            docx_path = fr'{local_dir}/hipo_{nome_doc_entry.get()}.docx'  # alterar caminho do arquivo, dependendo do dispositivo
-        elif choice_var.get() == 3:
-            proc_path = fr'{local_dir}\proc_{nome_doc_entry.get()}.docx'
-            hipo_path = fr'{local_dir}\hipo_{nome_doc_entry.get()}.docx'
-            contrato_path = fr'{local_dir}\contrato_{nome_doc_entry.get()}.docx'
-            convert_to_pdf(proc_path)
-            convert_to_pdf(hipo_path)
-            convert_to_pdf(contrato_path)
-            return
-        elif choice_var.get() == 4:
-            docx_path = fr'{local_dir}/contrato_{nome_doc_entry.get()}.docx'
-            return
-        convert_to_pdf(docx_path)
+   
 
-    convert_button = ttk.Button(mainframe, text="Converter para PDF", command=convert_to_pdf_wrapper)
-    convert_button.grid(column=2, row=17, sticky=(tk.W, tk.E))
 
     for child in mainframe.winfo_children():
         child.grid_configure(padx=5, pady=5)
