@@ -9,6 +9,14 @@ from ScriptHipo import hipo_creator
 from ScriptContrato import contrato_creator
 from ScriptProcuracao import proc_creator
 
+import sys
+
+if getattr(sys, 'frozen', False): 
+    local_dir = sys._MEIPASS
+else:
+    local_dir = os.getcwd()
+
+
 local_dir = os.getcwd()
 
 def create_document(nome_doc_entry, nome_entry, std_civil_entry, ocupacao_entry, cpf_entry, rg_entry, endereco_entry, local_entry, dia_entry, mes_entry, ano_entry, choice_var, valor_mensal_entry, valor_total_entry, valor_assinatura_entry):
@@ -56,6 +64,8 @@ def create_document(nome_doc_entry, nome_entry, std_civil_entry, ocupacao_entry,
         elif choice == 2:
             hipo_creator(nome_doc, nome, std_civil, ocupacao, cpf, rg, endereco, local, dia, mes, ano)
         elif choice == 3:
+            contrato_creator(nome_doc, nome, std_civil, ocupacao, cpf, rg, endereco, local, dia, mes, ano, valor_mensal, valor_total, valor_assinatura)
+        elif choice == 4:
             proc_creator(nome_doc, nome, std_civil, ocupacao, cpf, rg, endereco, local, dia, mes, ano)
             hipo_creator(nome_doc, nome, std_civil, ocupacao, cpf, rg, endereco, local, dia, mes, ano)
             contrato_creator(nome_doc, nome, std_civil, ocupacao, cpf, rg, endereco, local, dia, mes, ano, valor_mensal, valor_total, valor_assinatura)
@@ -143,28 +153,28 @@ def create_gui():
     choice_var = tk.IntVar()
     ttk.Radiobutton(mainframe, text="Procuração", variable=choice_var, value=1).grid(column=1, row=15, sticky=tk.W)
     ttk.Radiobutton(mainframe, text="Declaração de Hipossuficiência", variable=choice_var, value=2).grid(column=2, row=15, sticky=tk.W)
-    ttk.Radiobutton(mainframe, text="Contrato", variable=choice_var, value=4).grid(column=3, row=15, sticky=tk.W)
-    ttk.Radiobutton(mainframe, text="Todos", variable=choice_var, value=3).grid(column=1, row=16, sticky=tk.W)
+    ttk.Radiobutton(mainframe, text="Contrato", variable=choice_var, value=3).grid(column=3, row=15, sticky=tk.W)
+    ttk.Radiobutton(mainframe, text="Todos", variable=choice_var, value=4).grid(column=1, row=16, sticky=tk.W)
 
     create_button = ttk.Button(mainframe, text="Criar Documento", command=lambda: create_document(nome_doc_entry, nome_entry, std_civil_entry, ocupacao_entry, cpf_entry, rg_entry, endereco_entry, local_entry, dia_entry, mes_entry, ano_entry, choice_var, valor_mensal_entry, valor_total_entry, valor_assinatura_entry))
     create_button.grid(column=2, row=16, sticky=(tk.W, tk.E))
 
     def convert_to_pdf_wrapper():
-        docx_path = fr'{local_dir}/proc_{nome_doc_entry.get()}.docx'  # alterar caminho do arquivo, dependendo do dispositivo
+        docx_path = fr'{local_dir}/procuracao_{nome_doc_entry.get()}.docx'  # alterar caminho do arquivo, dependendo do dispositivo
         if choice_var.get() == 1:
-            docx_path = fr'{local_dir}/proc_{nome_doc_entry.get()}.docx'  # alterar caminho do arquivo, dependendo do dispositivo
+            docx_path = fr'{local_dir}/procuracao_{nome_doc_entry.get()}.docx'  # alterar caminho do arquivo, dependendo do dispositivo
         elif choice_var.get() == 2:
             docx_path = fr'{local_dir}/hipo_{nome_doc_entry.get()}.docx'  # alterar caminho do arquivo, dependendo do dispositivo
         elif choice_var.get() == 3:
-            proc_path = fr'{local_dir}\proc_{nome_doc_entry.get()}.docx'
+            docx_path = fr'{local_dir}/contrato_{nome_doc_entry.get()}.docx'
+            return
+        elif choice_var.get() == 4:
+            proc_path = fr'{local_dir}\procuracao_{nome_doc_entry.get()}.docx'
             hipo_path = fr'{local_dir}\hipo_{nome_doc_entry.get()}.docx'
             contrato_path = fr'{local_dir}\contrato_{nome_doc_entry.get()}.docx'
             convert_to_pdf(proc_path)
             convert_to_pdf(hipo_path)
             convert_to_pdf(contrato_path)
-            return
-        elif choice_var.get() == 4:
-            docx_path = fr'{local_dir}/contrato_{nome_doc_entry.get()}.docx'
             return
         convert_to_pdf(docx_path)
 
