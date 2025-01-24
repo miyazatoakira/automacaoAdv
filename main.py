@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
 import datetime
-from docx2pdf import convert
+import docx2pdf
 import os
 
 from ScriptHipo import hipo_creator
