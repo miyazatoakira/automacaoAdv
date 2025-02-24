@@ -65,5 +65,5 @@ def contrato_creator(nome_doc, nome, std_civil, ocupacao, cpf, rg, endereco, loc
     center_paragraph = doc.add_paragraph("IVONE PEREIRA DE SOUSA")
     center_paragraph.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
 
-    doc.save(fr'{local_dir}/contrato_{nome_doc}.docx') # alterar caminho do arquivo, dependendo do dispositivo
+    doc.save(fr'{local_dir}/Contratos/contrato_{nome_doc}.docx') # alterar caminho do arquivo, dependendo do dispositivo
     messagebox.showinfo("Sucesso", "Contrato de honorários advocatícios criado com sucesso!")

@@ -55,5 +55,5 @@ def hipo_creator(nome_doc, nome, std_civil, ocupacao, cpf, rg, endereco, local, 
     for run in center_paragraph.runs:
         run.bold = True
 
-    doc.save(fr'{local_dir}/hipo_{nome_doc}.docx')
+    doc.save(fr'{local_dir}/Hipo/hipo_{nome_doc}.docx')
     messagebox.showinfo("Sucesso", "Declaração de Hipossuficiência criada com sucesso!")

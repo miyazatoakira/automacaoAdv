@@ -66,5 +66,5 @@ def proc_creator(nome_doc, nome, std_civil, ocupacao, cpf, rg, endereco, local, 
     for run in center_paragraph.runs:
         run.bold = True
 
-    doc.save(fr'{local_dir}/proc_{nome_doc}.docx')
+    doc.save(fr'{local_dir}/Procuracoes/proc_{nome_doc}.docx')
     messagebox.showinfo("Sucesso", "Procuração criada com sucesso!")
