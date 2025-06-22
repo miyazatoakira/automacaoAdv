@@ -23,6 +23,7 @@ def _check_tessdata() -> bool:
             return True
     return False
 
+
 def _load_image(file_path: str) -> "np.ndarray":
     ext = os.path.splitext(file_path)[1].lower()
     if ext == ".pdf":
@@ -64,6 +65,7 @@ def extract_text(file_path: str) -> str:
                 "para o diretório tessdata."
             )
         raise RuntimeError(f"Erro no Tesseract: {e}")
+
 
 
 def parse_rg_text(text: str) -> Tuple[str, str, str]:

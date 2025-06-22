@@ -12,18 +12,3 @@
 Agora é possível importar dados diretamente de uma imagem ou PDF do RG. Basta
 clicar em **Carregar RG** na tela principal. A extração utiliza OpenCV e
 pytesseract para reconhecer os campos de nome, CPF e RG.
-
-## Dependências
-
-Instale os seguintes pacotes Python:
-
-```
-pip install opencv-python pytesseract pdf2image docx2pdf num2words
-```
-
-Além disso, é necessário ter o utilitário **Tesseract OCR** e o pacote
-**poppler** (para converter PDFs em imagens) instalados no sistema.
-Em alguns ambientes pode ser preciso configurar a variável de ambiente
-`TESSDATA_PREFIX` apontando para o diretório `tessdata` do Tesseract.
-Certifique-se também de que o arquivo `por.traineddata` (idioma português)
-esteja presente nesse diretório.
