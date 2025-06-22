@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
-from tkinter import messagebox
+from tkinter import messagebox, filedialog
 import sys
 import os
 import re
@@ -12,6 +12,7 @@ from num2words import num2words
 from ScriptHipo import hipo_creator
 from ScriptContrato import contrato_creator
 from ScriptProcuracao import proc_creator
+from rg_processor import extract_rg_data
 
 #################################################
 # 1) Função para identificar o caminho base
@@ -248,6 +249,36 @@ def convert_to_pdf_wrapper(choice_var, nome_doc_entry):
     else:
         messagebox.showerror("Erro", "Escolha inválida para conversão em PDF!")
 
+#####################################
+# 7.1) Carregar dados a partir do RG
+#####################################
+def load_rg_file(nome_entry, cpf_entry, rg_entry):
+    file_path = filedialog.askopenfilename(
+        title="Selecione imagem ou PDF do RG",
+        filetypes=[
+            ("Imagens", "*.png *.jpg *.jpeg"),
+            ("PDF", "*.pdf"),
+            ("Todos", "*.png *.jpg *.jpeg *.pdf"),
+        ],
+    )
+    if not file_path:
+        return
+    try:
+        nome, cpf, rg = extract_rg_data(file_path)
+    except Exception as e:
+        messagebox.showerror("Erro", f"Falha ao extrair dados do RG: {e}")
+        return
+
+    if nome:
+        nome_entry.delete(0, tk.END)
+        nome_entry.insert(0, nome)
+    if cpf:
+        cpf_entry.delete(0, tk.END)
+        cpf_entry.insert(0, cpf)
+    if rg:
+        rg_entry.delete(0, tk.END)
+        rg_entry.insert(0, rg)
+
 #############################
 # 8) Interface Principal (GUI)
 #############################
@@ -284,6 +315,11 @@ def create_gui():
     ttk.Label(mainframe, text="RG:").grid(column=1, row=6, sticky=tk.W)
     rg_entry = ttk.Entry(mainframe, width=40)
     rg_entry.grid(column=2, row=6, sticky=(tk.W, tk.E))
+    ttk.Button(
+        mainframe,
+        text="Carregar RG",
+        command=lambda: load_rg_file(nome_entry, cpf_entry, rg_entry),
+    ).grid(column=3, row=6, sticky=tk.W)
 
     ttk.Label(mainframe, text="Endereço:").grid(column=1, row=7, sticky=tk.W)
     endereco_entry = ttk.Entry(mainframe, width=40)
