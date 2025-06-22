@@ -83,24 +83,53 @@ def extract_text(file_path: str) -> str:
 
 def parse_rg_text(text: str) -> Tuple[str, str, str]:
     """Return nome, cpf and rg extracted from OCR text."""
+    lines = [l.strip() for l in text.splitlines() if l.strip()]
     nome = ""
     cpf = ""
     rg = ""
-    for line in text.splitlines():
+
+    for i, line in enumerate(lines):
         if not nome:
-            m = re.search(r"nome[:\s-]*([A-ZÀ-Ú\s]+)", line, re.IGNORECASE)
+            m = re.search(r"nome[:\s-]*([A-Za-zÀ-ÿ\s]{3,})", line, re.IGNORECASE)
             if m:
                 nome = m.group(1).strip()
+            elif re.search(r"nome", line, re.IGNORECASE) and i + 1 < len(lines):
+                nome = lines[i + 1].strip()
+
         if not cpf:
-            m = re.search(r"(\d{3}\.?\d{3}\.?\d{3}-?\d{2})", line)
+            m = re.search(r"(\d{3}[\.\s]?\d{3}[\.\s]?\d{3}[\-\s]?\d{2})", line)
             if m:
-                cpf = m.group(1)
+                digits = re.sub(r"\D", "", m.group(1))
+                cpf = f"{digits[:3]}.{digits[3:6]}.{digits[6:9]}-{digits[9:11]}"
+
         if not rg:
-            m = re.search(r"(\d{2}\.?\d{3}\.?\d{3}-?\d)", line)
+            m = re.search(r"(\d{1,2}[\.\s]?\d{3}[\.\s]?\d{3}[\-\s]?\d)", line)
             if m:
-                rg = m.group(1)
+                digits = re.sub(r"\D", "", m.group(1))
+                if len(digits) == 9:
+                    rg = f"{digits[:2]}.{digits[2:5]}.{digits[5:8]}-{digits[8]}"
+                else:
+                    rg = digits
+
         if nome and cpf and rg:
             break
+
+    if not cpf:
+        m = re.search(r"(\d{3}[\.\s]?\d{3}[\.\s]?\d{3}[\-\s]?\d{2})", text)
+        if m:
+            digits = re.sub(r"\D", "", m.group(1))
+            cpf = f"{digits[:3]}.{digits[3:6]}.{digits[6:9]}-{digits[9:11]}"
+
+    if not rg:
+        m = re.search(r"(\d{1,2}[\.\s]?\d{3}[\.\s]?\d{3}[\-\s]?\d)", text)
+        if m:
+            digits = re.sub(r"\D", "", m.group(1))
+            if len(digits) == 9:
+                rg = f"{digits[:2]}.{digits[2:5]}.{digits[5:8]}-{digits[8]}"
+            else:
+                rg = digits
+
+
     return nome, cpf, rg
 
 
