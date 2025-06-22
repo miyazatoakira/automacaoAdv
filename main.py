@@ -263,11 +263,20 @@ def load_rg_file(nome_entry, cpf_entry, rg_entry):
     )
     if not file_path:
         return
+    progress = tk.Toplevel()
+    progress.title("Extraindo RG")
+    ttk.Label(progress, text="Extraindo dados, aguarde...").pack(padx=20, pady=10)
+    bar = ttk.Progressbar(progress, mode="indeterminate")
+    bar.pack(padx=20, pady=10)
+    bar.start()
+    progress.update()
     try:
         nome, cpf, rg = extract_rg_data(file_path)
     except Exception as e:
+        progress.destroy()
         messagebox.showerror("Erro", f"Falha ao extrair dados do RG: {e}")
         return
+    progress.destroy()
 
     if nome:
         nome_entry.delete(0, tk.END)

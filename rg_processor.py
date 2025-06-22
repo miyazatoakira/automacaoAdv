@@ -82,18 +82,25 @@ def extract_text(file_path: str) -> str:
 
 
 def parse_rg_text(text: str) -> Tuple[str, str, str]:
+    """Return nome, cpf and rg extracted from OCR text."""
     nome = ""
     cpf = ""
     rg = ""
-    nome_match = re.search(r"nome[:\s-]*([A-ZÀ-Ú\s]+)", text, re.IGNORECASE)
-    if nome_match:
-        nome = nome_match.group(1).strip()
-    cpf_match = re.search(r"(\d{3}\.?\d{3}\.?\d{3}-?\d{2})", text)
-    if cpf_match:
-        cpf = cpf_match.group(1)
-    rg_match = re.search(r"(\d{2}\.?\d{3}\.?\d{3}-?\d)", text)
-    if rg_match:
-        rg = rg_match.group(1)
+    for line in text.splitlines():
+        if not nome:
+            m = re.search(r"nome[:\s-]*([A-ZÀ-Ú\s]+)", line, re.IGNORECASE)
+            if m:
+                nome = m.group(1).strip()
+        if not cpf:
+            m = re.search(r"(\d{3}\.?\d{3}\.?\d{3}-?\d{2})", line)
+            if m:
+                cpf = m.group(1)
+        if not rg:
+            m = re.search(r"(\d{2}\.?\d{3}\.?\d{3}-?\d)", line)
+            if m:
+                rg = m.group(1)
+        if nome and cpf and rg:
+            break
     return nome, cpf, rg
 
 
