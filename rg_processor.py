@@ -98,68 +98,72 @@ def parse_rg_text(text: str) -> Tuple[str, str, str]:
     rg = ""
 
     for i, (line, nline) in enumerate(zip(lines, norm_lines)):
+        # NOME
         if not nome and "nome" in nline:
             after = re.split(r"nome[:\s-]*", line, flags=re.IGNORECASE, maxsplit=1)
-            if len(after) > 1 and after[1].strip():
+            if len(after) > 1 and re.search(r"[A-Za-zÀ-ÿ]{2}", after[1]):
                 nome = after[1].strip()
-            elif i + 1 < len(lines):
+            elif i + 1 < len(lines) and re.search(r"[A-Za-zÀ-ÿ]{2}", lines[i + 1]):
                 nome = lines[i + 1].strip()
 
-        if not cpf:
-            if "cpf" in nline:
-                digits = re.sub(r"\D", "", line)
-                if len(digits) < 11 and i + 1 < len(lines):
-                    digits += re.sub(r"\D", "", lines[i + 1])
-                if len(digits) >= 11:
-                    digits = digits[:11]
-                    cpf = f"{digits[:3]}.{digits[3:6]}.{digits[6:9]}-{digits[9:11]}"
-            else:
-                m = re.search(r"\d{3}\D*\d{3}\D*\d{3}\D*\d{2}", line)
-                if m:
-                    digits = re.sub(r"\D", "", m.group(0))
-                    cpf = f"{digits[:3]}.{digits[3:6]}.{digits[6:9]}-{digits[9:11]}"
+        # CPF
+        if not cpf and "cpf" in nline:
+            digits = re.sub(r"\D", "", line)
+            if len(digits) < 11 and i + 1 < len(lines):
+                digits += re.sub(r"\D", "", lines[i + 1])
+            if len(digits) >= 11:
+                digits = digits[:11]
+                cpf = f"{digits[:3]}.{digits[3:6]}.{digits[6:9]}-{digits[9:11]}"
 
-        if not rg:
-            if re.search(r"r\s*\.?\s*g", nline):
-                digits = re.sub(r"\D", "", line)
-                if len(digits) < 9 and i + 1 < len(lines):
-                    digits += re.sub(r"\D", "", lines[i + 1])
-                if len(digits) >= 8:
-                    digits = digits[:9]
-                    if len(digits) == 9:
-                        rg = f"{digits[:2]}.{digits[2:5]}.{digits[5:8]}-{digits[8]}"
-                    else:
-                        rg = digits
-            else:
-                m = re.search(r"\d{1,2}\D*\d{3}\D*\d{3}\D*\d", line)
-                if m:
-                    digits = re.sub(r"\D", "", m.group(0))
-                    if len(digits) == 9:
-                        rg = f"{digits[:2]}.{digits[2:5]}.{digits[5:8]}-{digits[8]}"
-                    else:
-                        rg = digits
+        # RG
+        if not rg and ("rg" in nline or "identidade" in nline):
+            digits = re.sub(r"\D", "", line)
+            if len(digits) < 9 and i + 1 < len(lines):
+                digits += re.sub(r"\D", "", lines[i + 1])
+            if len(digits) >= 8:
+                digits = digits[:9]
+                if len(digits) == 9:
+                    rg = f"{digits[:2]}.{digits[2:5]}.{digits[5:8]}-{digits[8]}"
+                else:
+                    rg = digits
 
         if nome and cpf and rg:
             break
 
     if not cpf:
-        m = re.search(r"\d{3}\D*\d{3}\D*\d{3}\D*\d{2}", text)
+        m = re.search(r"\b\d{3}\D?\d{3}\D?\d{3}\D?\d{2}\b", text)
         if m:
-            digits = re.sub(r"\D", "", m.group(0))
+            digits = re.sub(r"\D", "", m.group(0))[:11]
             cpf = f"{digits[:3]}.{digits[3:6]}.{digits[6:9]}-{digits[9:11]}"
 
     if not rg:
-        m = re.search(r"\d{1,2}\D*\d{3}\D*\d{3}\D*\d", text)
+        m = re.search(r"\b\d{1,2}\D?\d{3}\D?\d{3}\D?\d\b", text)
         if m:
-            digits = re.sub(r"\D", "", m.group(0))
+            digits = re.sub(r"\D", "", m.group(0))[:9]
+
             if len(digits) == 9:
                 rg = f"{digits[:2]}.{digits[2:5]}.{digits[5:8]}-{digits[8]}"
             else:
                 rg = digits
+
+    if not nome:
+        for line, nline in zip(lines, norm_lines):
+            if re.match(r"^[A-Za-zÀ-ÿ ]{3,}$", line):
+                nome = line.strip()
+                break
 
     return nome, cpf, rg
 
 
 def extract_rg_data(file_path: str) -> Tuple[str, str, str]:
     text = extract_text(file_path)
-    return parse_rg_text(text)
+    nome, cpf, rg = parse_rg_text(text)
+
+    if not nome:
+        print("Aviso: nome não encontrado.")
+    if not cpf:
+        print("Aviso: CPF não encontrado.")
+    if not rg:
+        print("Aviso: RG não encontrado.")
+
+    return nome, cpf, rg
