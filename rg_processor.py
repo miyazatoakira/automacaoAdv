@@ -93,7 +93,6 @@ def parse_rg_text(text: str) -> Tuple[str, str, str]:
     """Return nome, cpf and rg extracted from OCR text."""
     lines = [l.strip() for l in text.splitlines() if l.strip()]
     norm_lines = [_normalize(l) for l in lines]
-
     nome = ""
     cpf = ""
     rg = ""
@@ -141,6 +140,7 @@ def parse_rg_text(text: str) -> Tuple[str, str, str]:
         m = re.search(r"\b\d{1,2}\D?\d{3}\D?\d{3}\D?\d\b", text)
         if m:
             digits = re.sub(r"\D", "", m.group(0))[:9]
+
             if len(digits) == 9:
                 rg = f"{digits[:2]}.{digits[2:5]}.{digits[5:8]}-{digits[8]}"
             else:
