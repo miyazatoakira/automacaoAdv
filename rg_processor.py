@@ -12,17 +12,30 @@ def _check_tessdata() -> bool:
     """Return True if por.traineddata exists in any known tessdata path."""
     lang_file = "por.traineddata"
     prefix = os.environ.get("TESSDATA_PREFIX")
+    base_dir = os.path.dirname(__file__)
     possible_dirs = [
         prefix if prefix else "",
+        os.path.join(base_dir, "tessdata"),
+        base_dir,
+        "/usr/share/tesseract-ocr/5/tessdata",
         "/usr/share/tesseract-ocr/4.00/tessdata",
         "/usr/share/tesseract-ocr/tessdata",
         "/usr/share/tesseract/tessdata",
     ]
     for d in filter(None, possible_dirs):
         if os.path.exists(os.path.join(d, lang_file)):
+            os.environ["TESSDATA_PREFIX"] = d
             return True
     return False
 
+
+def _ensure_tessdata():
+    """Set TESSDATA_PREFIX to a directory containing por.traineddata."""
+    if not _check_tessdata():
+        raise RuntimeError(
+            "Arquivo 'por.traineddata' não encontrado. Copie-o para a pasta "
+            "'tessdata' do projeto ou defina a variável TESSDATA_PREFIX."
+        )
 
 def _load_image(file_path: str) -> "np.ndarray":
     ext = os.path.splitext(file_path)[1].lower()
@@ -47,6 +60,7 @@ def _preprocess_image(image: "np.ndarray") -> "np.ndarray":
 
 
 def extract_text(file_path: str) -> str:
+    _ensure_tessdata()
     image = _load_image(file_path)
     processed = _preprocess_image(image)
     try:
@@ -65,7 +79,6 @@ def extract_text(file_path: str) -> str:
                 "para o diretório tessdata."
             )
         raise RuntimeError(f"Erro no Tesseract: {e}")
-
 
 
 def parse_rg_text(text: str) -> Tuple[str, str, str]:
