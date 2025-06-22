@@ -11,9 +11,6 @@
 
 Agora é possível importar dados diretamente de uma imagem ou PDF do RG. Basta
 clicar em **Carregar RG** na tela principal. A extração utiliza OpenCV e
-<<<<<<< ours
-pytesseract para reconhecer os campos de nome, CPF e RG.
-=======
 pytesseract para reconhecer os campos de nome, CPF e RG.
 
 ## Dependências
@@ -31,4 +28,3 @@ Você pode copiá‑lo para uma pasta `tessdata` no diretório deste projeto e o
 código definirá automaticamente `TESSDATA_PREFIX` para esse caminho. Também 
 é possível definir manualmente a variável de ambiente `TESSDATA_PREFIX` para o
 diretório onde esse arquivo se encontra.
->>>>>>> theirs

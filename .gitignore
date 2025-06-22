@@ -1,3 +1,5 @@
 Procuracoes/
 Hipo/
 Contratos/
+__pycache__/
+*.pyc
