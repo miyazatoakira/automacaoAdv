@@ -129,6 +129,7 @@ def parse_rg_text(text: str) -> Tuple[str, str, str]:
             else:
                 rg = digits
 
+
     return nome, cpf, rg
 
 
