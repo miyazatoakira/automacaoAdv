@@ -5,8 +5,8 @@ from typing import Tuple
 
 import cv2
 import numpy as np
-from pdf2image import convert_from_path
-import pytesseract
+#from pdf2image import convert_from_path
+#import pytesseract
 
 
 def _normalize(text: str) -> str:

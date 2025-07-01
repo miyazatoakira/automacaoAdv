@@ -12,7 +12,7 @@ from num2words import num2words
 from ScriptHipo import hipo_creator
 from ScriptContrato import contrato_creator
 from ScriptProcuracao import proc_creator
-from rg_processor import extract_rg_data
+#from rg_processor import extract_rg_data
 
 #################################################
 # 1) Função para identificar o caminho base
@@ -317,11 +317,11 @@ def create_gui():
     ocupacao_entry = ttk.Entry(mainframe, width=40)
     ocupacao_entry.grid(column=2, row=4, sticky=(tk.W, tk.E))
 
-    ttk.Label(mainframe, text="CPF:").grid(column=1, row=5, sticky=tk.W)
+    ttk.Label(mainframe, text="CPF (com pontuação):").grid(column=1, row=5, sticky=tk.W)
     cpf_entry = ttk.Entry(mainframe, width=40)
     cpf_entry.grid(column=2, row=5, sticky=(tk.W, tk.E))
 
-    ttk.Label(mainframe, text="RG:").grid(column=1, row=6, sticky=tk.W)
+    ttk.Label(mainframe, text="RG (com pontuação):").grid(column=1, row=6, sticky=tk.W)
     rg_entry = ttk.Entry(mainframe, width=40)
     rg_entry.grid(column=2, row=6, sticky=(tk.W, tk.E))
     ttk.Button(
@@ -342,7 +342,7 @@ def create_gui():
     dia_entry = ttk.Entry(mainframe, width=40)
     dia_entry.grid(column=2, row=9, sticky=(tk.W, tk.E))
 
-    ttk.Label(mainframe, text="Mês:").grid(column=1, row=10, sticky=tk.W)
+    ttk.Label(mainframe, text="Mês (Por extenso):").grid(column=1, row=10, sticky=tk.W)
     mes_entry = ttk.Entry(mainframe, width=40)
     mes_entry.grid(column=2, row=10, sticky=(tk.W, tk.E))
 
